@@ -1416,35 +1416,32 @@ class TestGoogleCloudInterface(TestCase):
     )
     def test_uploader_malformed_urls(self):
         tests = {
-            'wrong domain': {
-                'url': 'https://unexpected.domain/storage/browser/container',
-                'error': ValueError,
-                'message': "google cloud storage URL https://unexpected.domain/storage/browser/container is malformed. "
-                           "Should start with 'https://console.cloud.google.com/storage/browser'"
+            "wrong domain": {
+                "url": "https://unexpected.domain/storage/browser/container",
+                "error": ValueError,
+                "message": "google cloud storage URL https://unexpected.domain/storage/browser/container is malformed. "
+                "Should start with 'https://console.cloud.google.com/storage/browser'",
             },
-            'wrong base path': {
-                'url': 'https://console.cloud.google.com/storage/container',
-                'error': ValueError,
-                'message': "google cloud storage URL https://console.cloud.google.com/storage/container is malformed. "
-                           "Should start with 'https://console.cloud.google.com/storage/browser'"
+            "wrong base path": {
+                "url": "https://console.cloud.google.com/storage/container",
+                "error": ValueError,
+                "message": "google cloud storage URL https://console.cloud.google.com/storage/container is malformed. "
+                "Should start with 'https://console.cloud.google.com/storage/browser'",
             },
-            'missing bucket': {
-                'url': 'https://console.cloud.google.com/storage/browser',
-                'error': ValueError,
-                'message': "Google cloud storage URL https://console.cloud.google.com/storage/browser is malformed. "
-                           "Bucket name not found"
-            }
+            "missing bucket": {
+                "url": "https://console.cloud.google.com/storage/browser",
+                "error": ValueError,
+                "message": "Google cloud storage URL https://console.cloud.google.com/storage/browser is malformed. "
+                "Bucket name not found",
+            },
         }
         for test_name, test in tests.items():
             with self.subTest(test_name):
-                with pytest.raises(test['error']) as exc:
-                    GoogleCloudInterface(url=test['url'])
-                assert str(exc.value) == test['message']
+                with pytest.raises(test["error"]) as exc:
+                    GoogleCloudInterface(url=test["url"])
+                assert str(exc.value) == test["message"]
 
-
-    @mock.patch.dict(
-        os.environ, {"GOOGLE_APPLICATION_CREDENTIALS": "credentials_path"}
-    )
+    @mock.patch.dict(os.environ, {"GOOGLE_APPLICATION_CREDENTIALS": "credentials_path"})
     @mock.patch("barman.cloud_providers.google_cloud_storage.storage.Client")
     def test_connectivity(self, blob_service_mock):
         """
@@ -1455,14 +1452,10 @@ class TestGoogleCloudInterface(TestCase):
         )
         assert cloud_interface.test_connectivity() is True
         blob_service_client_mock = blob_service_mock.return_value
-        container_client_mock = (
-            blob_service_client_mock.bucket.return_value
-        )
+        container_client_mock = blob_service_client_mock.bucket.return_value
         container_client_mock.exists.assert_called_once_with()
 
-    @mock.patch.dict(
-        os.environ, {"GOOGLE_APPLICATION_CREDENTIALS": "credentials_path"}
-    )
+    @mock.patch.dict(os.environ, {"GOOGLE_APPLICATION_CREDENTIALS": "credentials_path"})
     @mock.patch("barman.cloud_providers.google_cloud_storage.storage.Client")
     def test_connectivity_failure(self, blob_service_mock):
         """
@@ -1472,9 +1465,7 @@ class TestGoogleCloudInterface(TestCase):
             "https://console.cloud.google.com/storage/browser/bucket/path/some/blob"
         )
         blob_service_client_mock = blob_service_mock.return_value
-        container_client_mock = (
-            blob_service_client_mock.bucket.return_value
-        )
+        container_client_mock = blob_service_client_mock.bucket.return_value
         container_client_mock.exists.side_effect = GoogleAPIError("error")
         assert cloud_interface.test_connectivity() is False
 
@@ -1488,9 +1479,7 @@ class TestGoogleCloudInterface(TestCase):
         )
         cloud_interface.setup_bucket()
         blob_service_client_mock = blob_service_mock.return_value
-        container_client_mock = (
-            blob_service_client_mock.bucket.return_value
-        )
+        container_client_mock = blob_service_client_mock.bucket.return_value
         container_client_mock.exists.assert_called_once_with()
 
     # @mock.patch.dict(
@@ -1505,9 +1494,7 @@ class TestGoogleCloudInterface(TestCase):
             "https://console.cloud.google.com/storage/browser/barman-testss/test/path/to/my/"
         )
         blob_service_client_mock = blob_service_mock.return_value
-        container_client_mock = (
-            blob_service_client_mock.bucket.return_value
-        )
+        container_client_mock = blob_service_client_mock.bucket.return_value
         container_client_mock.exists.return_value = False
         cloud_interface.setup_bucket()
         container_client_mock.exists.assert_called_once_with()

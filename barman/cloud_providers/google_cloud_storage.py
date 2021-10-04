@@ -74,9 +74,11 @@ class GoogleCloudInterface(CloudInterface):
             raise ValueError(msg)
         self.account_url = parsed_url.netloc
         try:
-            self.bucket_name = parsed_url.path.split('/')[3]
+            self.bucket_name = parsed_url.path.split("/")[3]
         except IndexError:
-            raise ValueError(f"Google cloud storage URL {url} is malformed. Bucket name not found")
+            raise ValueError(
+                f"Google cloud storage URL {url} is malformed. Bucket name not found"
+            )
         path = parsed_url.path.split("/")[4:]
         self.path = "/".join(path)
 
@@ -126,7 +128,9 @@ class GoogleCloudInterface(CloudInterface):
         #  * access control
         #  Detailed documentation: https://googleapis.dev/python/storage/latest/client.html
         # Might be relevant to use configuration file for those parameters.
-        self.container_client = self.container_client.client.create_bucket(self.container_client)
+        self.container_client = self.container_client.client.create_bucket(
+            self.container_client
+        )
 
     # @abstractmethod
     def list_bucket(self, prefix="", delimiter="/"):
